@@ -1,0 +1,110 @@
+openapi: 3.0.0
+info:
+  title: Sherpa2
+  version: 1.0.0
+paths:
+  /sprints:
+    get:
+      summary: Get all sprints
+      parameters:
+        - $ref: '#/components/parameters/ProjectId'
+      responses:
+        '200':
+          description: An array of sprints in the project
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Sprint'
+    post:
+      summary: Create a sprint
+      parameters:
+        - $ref: '#/components/parameters/ProjectId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Sprint'
+      responses:
+        '200':
+          description: Created
+  /sprints/{id}:
+    get:
+      summary: Get sprint
+      parameters:
+        - $ref: '#/components/parameters/ProjectId'
+        - $ref: '#/components/parameters/Id'
+      responses:
+        '200':
+          description: A sprint
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Sprint'
+    put:
+      summary: Update a sprint
+      parameters:
+        - $ref: '#/components/parameters/ProjectId'
+        - $ref: '#/components/parameters/Id'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Sprint'
+      responses:
+        '200':
+          description: Updated
+    delete:
+      summary: Delete a sprint
+      parameters:
+        - $ref: '#/components/parameters/ProjectId'
+        - $ref: '#/components/parameters/Id'
+      responses:
+        '200':
+          description: Deleted
+components:
+  parameters:
+    Id:
+      name: id
+      in: path
+      required: true
+      schema:
+        type: number
+    ProjectId:
+      name: project_id
+      in: query
+      required: true
+      schema:
+        type: number
+  schemas:
+    Sprint:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        title:
+          type: string
+        description:
+          type: string
+          nullable: true
+        startAt:
+          type: string
+        endAt:
+          type: string
+        creatorId:
+          type: number
+        projectId:
+          type: number
+        createdAt:
+          type: string
+        updatedAt:
+          type: string
+      required:
+        - id
+        - title
