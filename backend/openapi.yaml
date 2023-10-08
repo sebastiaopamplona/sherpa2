@@ -3,70 +3,282 @@ info:
   title: Sherpa2
   version: 1.0.0
 paths:
-  /sprints:
-    get:
-      summary: Get all sprints
-      parameters:
-        - $ref: '#/components/parameters/ProjectId'
-      responses:
-        '200':
-          description: An array of sprints in the project
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Sprint'
+  /projects:
     post:
-      summary: Create a sprint
-      parameters:
-        - $ref: '#/components/parameters/ProjectId'
+      tags:
+        - project
+      operationId: CreateProject
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Sprint'
+              $ref: '#/components/schemas/CreateProjectRequest'
       responses:
         '200':
           description: Created
-  /sprints/{id}:
     get:
-      summary: Get sprint
-      parameters:
-        - $ref: '#/components/parameters/ProjectId'
-        - $ref: '#/components/parameters/Id'
+      tags:
+        - project
+      operationId: ListProjects
+      description: Lists projects
       responses:
         '200':
-          description: A sprint
+          description: An array of projects
           content:
             application/json:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/Sprint'
-    put:
-      summary: Update a sprint
+                  $ref: "#/components/schemas/Project"
+  /projects/{id}:
+    get:
+      tags:
+        - project
+      operationId: GetProject
       parameters:
-        - $ref: '#/components/parameters/ProjectId'
+        - $ref: '#/components/parameters/Id'
+      responses:
+        '200':
+          description: Project
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Project"
+    put:
+      tags:
+        - project
+      operationId: UpdateProject
+      parameters:
         - $ref: '#/components/parameters/Id'
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Sprint'
+              $ref: '#/components/schemas/UpdateProjectRequest'
       responses:
         '200':
           description: Updated
     delete:
-      summary: Delete a sprint
+      tags:
+        - project
+      operationId: DeleteProject
       parameters:
-        - $ref: '#/components/parameters/ProjectId'
         - $ref: '#/components/parameters/Id'
       responses:
         '200':
           description: Deleted
+  /projects/{id}/users:
+    get:
+      tags:
+        - project
+      operationId: GetProjectUsers
+      parameters:
+        - $ref: '#/components/parameters/Id'
+      responses:
+        '200':
+          description: Project users
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/User"
+  /sprints:
+    post:
+      tags:
+        - sprint
+      operationId: CreateSprint
+      parameters:
+        - $ref: '#/components/parameters/ProjectId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateSprintRequest'
+      responses:
+        '200':
+          description: Created
+    get:
+      tags:
+        - sprint
+      operationId: ListSprints
+      description: Lists sprints in a project
+      parameters:
+        - $ref: '#/components/parameters/ProjectId'
+      responses:
+        '200':
+          description: An array of sprints in a project
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Sprint"
+  /sprints/{id}:
+    get:
+      tags:
+        - sprint
+      operationId: GetSprint
+      parameters:
+        - $ref: '#/components/parameters/Id'
+      responses:
+        '200':
+          description: Sprint
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Sprint"
+    put:
+      tags:
+        - sprint
+      operationId: UpdateSprint
+      parameters:
+        - $ref: '#/components/parameters/Id'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateSprintRequest'
+      responses:
+        '200':
+          description: Updated
+    delete:
+      tags:
+        - sprint
+      operationId: DeleteSprint
+      parameters:
+        - $ref: '#/components/parameters/Id'
+      responses:
+        '200':
+          description: Deleted
+  /sprints/{id}/breakdown/stories:
+    get:
+      tags:
+        - sprint
+      operationId: GetSprintStoryBreakdown
+      parameters:
+        - $ref: '#/components/parameters/Id'
+      responses:
+        '200':
+          description: Array of days and count of story states per day
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/GetSprintStoryBreakdownResponse'
+  /sprints/{id}/breakdown/users:
+    get:
+      tags:
+        - sprint
+      operationId: GetSprintUserBreakdown
+      parameters:
+        - $ref: '#/components/parameters/Id'
+      responses:
+        '200':
+          description: Sprint story breakdown
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/GetSprintStoryBreakdownResponse'
+  /stories:
+    post:
+      tags:
+        - story
+      operationId: CreateStory
+      parameters:
+        - $ref: '#/components/parameters/ProjectId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateStoryRequest'
+      responses:
+        '200':
+          description: Created
+    get:
+      tags:
+        - story
+      operationId: ListStories
+      parameters:
+        - $ref: '#/components/parameters/ProjectId'
+        - $ref: '#/components/parameters/SprintIdOptional'
+      description: Lists stories
+      responses:
+        '200':
+          description: An array of stories
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Story'
+  /stories/{id}:
+    get:
+      tags:
+        - story
+      operationId: GetStory
+      parameters:
+        - $ref: '#/components/parameters/Id'
+      responses:
+        '200':
+          description: Story
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Story'
+    put:
+      tags:
+        - story
+      operationId: UpdateStory
+      parameters:
+        - $ref: '#/components/parameters/Id'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateStoryRequest'
+      responses:
+        '200':
+          description: Updated
+    delete:
+      tags:
+        - story
+      operationId: DeleteStory
+      parameters:
+        - $ref: '#/components/parameters/Id'
+        - $ref: '#/components/parameters/SprintId'
+        - $ref: '#/components/parameters/AssigneeId'
+        - $ref: '#/components/parameters/StartDate'
+        - $ref: '#/components/parameters/EndDate'
+      responses:
+        '200':
+          description: Deleted
+  /stories/timekeeper:
+    get:
+      tags:
+        - story
+      operationId: GetStoryTimekeeper
+      parameters:
+        - $ref: '#/components/parameters/Id'
+        - $ref: '#/components/parameters/SprintId'
+      responses:
+        '200':
+          description: Story
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Story'
 components:
   parameters:
     Id:
@@ -81,30 +293,294 @@ components:
       required: true
       schema:
         type: number
+    ProjectIdOptional:
+      name: project_id
+      in: query
+      required: false
+      schema:
+        type: number
+    SprintId:
+      name: sprint_id
+      in: query
+      required: true
+      schema:
+        type: number
+    SprintIdOptional:
+      name: sprint_id
+      in: query
+      required: false
+      schema:
+        type: number
+    AssigneeId:
+      name: assignee_id
+      in: query
+      required: true
+      schema:
+        type: number
+    StartDate:
+      name: start_date
+      in: query
+      required: true
+      schema:
+        type: string
+    EndDate:
+      name: end_date
+      in: query
+      required: true
+      schema:
+        type: string
   schemas:
+    ###############################
+    ########## Requests ###########
+    ###############################
+    CreateProjectRequest:
+      type: object
+      properties:
+        name:
+          type: string
+        description:
+          type: string
+          nullable: true
+        github_repos:
+          type: array
+          nullable: true
+          items:
+            type: string
+        jira_url:
+          type: string
+          nullable: true
+    UpdateProjectRequest:
+      type: object
+      properties:
+        name:
+          type: string
+        description:
+          type: string
+          nullable: true
+        github_repos:
+          type: array
+          nullable: true
+          items:
+            type: string
+        jira_url:
+          type: string
+          nullable: true
+    CreateSprintRequest:
+      type: object
+      properties:
+        title:
+          type: string
+        description:
+          type: string
+          nullable: true
+        start_at:
+          type: string
+        end_at:
+          type: string
+    UpdateSprintRequest:
+      type: object
+      properties:
+        title:
+          type: string
+        description:
+          type: string
+          nullable: true
+        start_at:
+          type: string
+        end_at:
+          type: string
+    CreateStoryRequest:
+      type: object
+      properties:
+        title:
+          type: string
+        description:
+          type: string
+          nullable: true
+        estimate:
+          type: integer
+          nullable: true
+        jira_id:
+          type: string
+          nullable: true
+        sprint_id:
+          type: string
+          nullable: true
+        assignee_id:
+          type: string
+          nullable: true
+    UpdateStoryRequest:
+      type: object
+      properties:
+        title:
+          type: string
+          nullable: true
+        description:
+          type: string
+          nullable: true
+        estimate:
+          type: integer
+          nullable: true
+        jira_id:
+          type: string
+          nullable: true
+        sprint_id:
+          type: string
+          nullable: true
+        assignee_id:
+          type: string
+          nullable: true
+    GetSprintStoryBreakdownResponse:
+      type: array
+      items:
+        type: object
+        properties:
+          day:
+            type: string
+          in_progress:
+            type: string
+          new:
+            type: string
+          ready:
+            type: string
+          delivered:
+            type: string
+          in_review:
+            type: string
+          done:
+            type: string
+          blocked:
+            type: string
+          deleted:
+            type: string
+
+    ###############################
+    ######## Data Objects #########
+    ###############################
+    User:
+      type: object
+      properties:
+        id:
+          type: string
+          readOnly: true
+        first_name:
+          type: string
+        last_name:
+          type: string
+        email:
+          type: string
+        avatar:
+          type: string
+    Project:
+      type: object
+      properties:
+        id:
+          type: string
+          readOnly: true
+        name:
+          type: string
+        description:
+          type: string
+          nullable: true
+        github_repos:
+          type: array
+          items:
+            type: string
+        jira_url:
+          type: string
+        creatorId:
+          type: number
+        created_at:
+          type: string
+        updated_at:
+          type: string
+      required:
+        - id
+        - title
     Sprint:
       type: object
       properties:
         id:
-          type: integer
+          type: string
           readOnly: true
         title:
           type: string
         description:
           type: string
           nullable: true
-        startAt:
+        start_at:
           type: string
-        endAt:
+        end_at:
           type: string
         creatorId:
           type: number
         projectId:
           type: number
-        createdAt:
+        created_at:
           type: string
-        updatedAt:
+        updated_at:
           type: string
       required:
         - id
         - title
+    Story:
+      type: object
+      properties:
+        id:
+          type: string
+          readOnly: true
+        title:
+          type: string
+        description:
+          type: string
+          nullable: true
+        estimate:
+          type: integer
+          nullable: true
+        jira_id:
+          type: string
+          nullable: true
+        project_id:
+          type: string
+        # TODO: add project
+        sprint_id:
+          type: string
+          nullable: true
+        sprint:
+          $ref: "#/components/schemas/Sprint"
+        creator_id:
+          type: string
+        creator:
+          $ref: "#/components/schemas/User"
+        assignee_id:
+          type: string
+          nullable: true
+        assignee:
+          $ref: "#/components/schemas/User"
+        # TODO: add worklogs
+    Worklog:
+      type: object
+      properties:
+        id:
+          type: string
+          readOnly: true
+        description:
+          type: string
+        date:
+          type: string
+        effort:
+          type: string
+        remaining_effort:
+          type: string
+        story_id:
+          type: number
+        user_id:
+          type: number
+        created_at:
+          type: string
+        updated_at:
+          type: string
+      required:
+        - id
+        - description
+        - effort

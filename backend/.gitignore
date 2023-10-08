@@ -1,1 +1,4 @@
-./api/openapi/*.go
+**/openapi
+**/.idea
+**/.vscode
+**/.history

@@ -1,0 +1,832 @@
+openapi: 3.0.0
+info:
+  title: Sherpa2
+  version: 1.0.0
+servers:
+- url: /
+paths:
+  /projects:
+    get:
+      description: Lists projects
+      operationId: ListProjects
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/Project'
+                type: array
+          description: An array of projects
+      tags:
+      - project
+    post:
+      operationId: CreateProject
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateProjectRequest'
+        required: true
+      responses:
+        "200":
+          description: Created
+      tags:
+      - project
+  /projects/{id}:
+    delete:
+      operationId: DeleteProject
+      parameters:
+      - explode: false
+        in: path
+        name: id
+        required: true
+        schema:
+          type: number
+        style: simple
+      responses:
+        "200":
+          description: Deleted
+      tags:
+      - project
+    get:
+      operationId: GetProject
+      parameters:
+      - explode: false
+        in: path
+        name: id
+        required: true
+        schema:
+          type: number
+        style: simple
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Project'
+          description: Project
+      tags:
+      - project
+    put:
+      operationId: UpdateProject
+      parameters:
+      - explode: false
+        in: path
+        name: id
+        required: true
+        schema:
+          type: number
+        style: simple
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateProjectRequest'
+        required: true
+      responses:
+        "200":
+          description: Updated
+      tags:
+      - project
+  /projects/{id}/users:
+    get:
+      operationId: GetProjectUsers
+      parameters:
+      - explode: false
+        in: path
+        name: id
+        required: true
+        schema:
+          type: number
+        style: simple
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/User'
+                type: array
+          description: Project users
+      tags:
+      - project
+  /sprints:
+    get:
+      description: Lists sprints in a project
+      operationId: ListSprints
+      parameters:
+      - explode: true
+        in: query
+        name: project_id
+        required: true
+        schema:
+          type: number
+        style: form
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/Sprint'
+                type: array
+          description: An array of sprints in a project
+      tags:
+      - sprint
+    post:
+      operationId: CreateSprint
+      parameters:
+      - explode: true
+        in: query
+        name: project_id
+        required: true
+        schema:
+          type: number
+        style: form
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateSprintRequest'
+        required: true
+      responses:
+        "200":
+          description: Created
+      tags:
+      - sprint
+  /sprints/{id}:
+    delete:
+      operationId: DeleteSprint
+      parameters:
+      - explode: false
+        in: path
+        name: id
+        required: true
+        schema:
+          type: number
+        style: simple
+      responses:
+        "200":
+          description: Deleted
+      tags:
+      - sprint
+    get:
+      operationId: GetSprint
+      parameters:
+      - explode: false
+        in: path
+        name: id
+        required: true
+        schema:
+          type: number
+        style: simple
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/Sprint'
+                type: array
+          description: Sprint
+      tags:
+      - sprint
+    put:
+      operationId: UpdateSprint
+      parameters:
+      - explode: false
+        in: path
+        name: id
+        required: true
+        schema:
+          type: number
+        style: simple
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateSprintRequest'
+        required: true
+      responses:
+        "200":
+          description: Updated
+      tags:
+      - sprint
+  /sprints/{id}/breakdown/stories:
+    get:
+      operationId: GetSprintStoryBreakdown
+      parameters:
+      - explode: false
+        in: path
+        name: id
+        required: true
+        schema:
+          type: number
+        style: simple
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/GetSprintStoryBreakdownResponse'
+                type: array
+          description: Array of days and count of story states per day
+      tags:
+      - sprint
+  /sprints/{id}/breakdown/users:
+    get:
+      operationId: GetSprintUserBreakdown
+      parameters:
+      - explode: false
+        in: path
+        name: id
+        required: true
+        schema:
+          type: number
+        style: simple
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/GetSprintStoryBreakdownResponse'
+                type: array
+          description: Sprint story breakdown
+      tags:
+      - sprint
+  /stories:
+    get:
+      description: Lists stories
+      operationId: ListStories
+      parameters:
+      - explode: true
+        in: query
+        name: project_id
+        required: true
+        schema:
+          type: number
+        style: form
+      - explode: true
+        in: query
+        name: sprint_id
+        required: false
+        schema:
+          type: number
+        style: form
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/Story'
+                type: array
+          description: An array of stories
+      tags:
+      - story
+    post:
+      operationId: CreateStory
+      parameters:
+      - explode: true
+        in: query
+        name: project_id
+        required: true
+        schema:
+          type: number
+        style: form
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateStoryRequest'
+        required: true
+      responses:
+        "200":
+          description: Created
+      tags:
+      - story
+  /stories/{id}:
+    delete:
+      operationId: DeleteStory
+      parameters:
+      - explode: false
+        in: path
+        name: id
+        required: true
+        schema:
+          type: number
+        style: simple
+      - explode: true
+        in: query
+        name: sprint_id
+        required: true
+        schema:
+          type: number
+        style: form
+      - explode: true
+        in: query
+        name: assignee_id
+        required: true
+        schema:
+          type: number
+        style: form
+      - explode: true
+        in: query
+        name: start_date
+        required: true
+        schema:
+          type: string
+        style: form
+      - explode: true
+        in: query
+        name: end_date
+        required: true
+        schema:
+          type: string
+        style: form
+      responses:
+        "200":
+          description: Deleted
+      tags:
+      - story
+    get:
+      operationId: GetStory
+      parameters:
+      - explode: false
+        in: path
+        name: id
+        required: true
+        schema:
+          type: number
+        style: simple
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Story'
+          description: Story
+      tags:
+      - story
+    put:
+      operationId: UpdateStory
+      parameters:
+      - explode: false
+        in: path
+        name: id
+        required: true
+        schema:
+          type: number
+        style: simple
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateStoryRequest'
+        required: true
+      responses:
+        "200":
+          description: Updated
+      tags:
+      - story
+  /stories/timekeeper:
+    get:
+      operationId: GetStoryTimekeeper
+      parameters:
+      - explode: false
+        in: path
+        name: id
+        required: true
+        schema:
+          type: number
+        style: simple
+      - explode: true
+        in: query
+        name: sprint_id
+        required: true
+        schema:
+          type: number
+        style: form
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Story'
+          description: Story
+      tags:
+      - story
+components:
+  parameters:
+    Id:
+      explode: false
+      in: path
+      name: id
+      required: true
+      schema:
+        type: number
+      style: simple
+    ProjectId:
+      explode: true
+      in: query
+      name: project_id
+      required: true
+      schema:
+        type: number
+      style: form
+    ProjectIdOptional:
+      explode: true
+      in: query
+      name: project_id
+      required: false
+      schema:
+        type: number
+      style: form
+    SprintId:
+      explode: true
+      in: query
+      name: sprint_id
+      required: true
+      schema:
+        type: number
+      style: form
+    SprintIdOptional:
+      explode: true
+      in: query
+      name: sprint_id
+      required: false
+      schema:
+        type: number
+      style: form
+    AssigneeId:
+      explode: true
+      in: query
+      name: assignee_id
+      required: true
+      schema:
+        type: number
+      style: form
+    StartDate:
+      explode: true
+      in: query
+      name: start_date
+      required: true
+      schema:
+        type: string
+      style: form
+    EndDate:
+      explode: true
+      in: query
+      name: end_date
+      required: true
+      schema:
+        type: string
+      style: form
+  schemas:
+    CreateProjectRequest:
+      example:
+        name: name
+        description: description
+        jira_url: jira_url
+        github_repos:
+        - github_repos
+        - github_repos
+      properties:
+        name:
+          type: string
+        description:
+          nullable: true
+          type: string
+        github_repos:
+          items:
+            type: string
+          nullable: true
+          type: array
+        jira_url:
+          nullable: true
+          type: string
+      type: object
+    UpdateProjectRequest:
+      example:
+        name: name
+        description: description
+        jira_url: jira_url
+        github_repos:
+        - github_repos
+        - github_repos
+      properties:
+        name:
+          type: string
+        description:
+          nullable: true
+          type: string
+        github_repos:
+          items:
+            type: string
+          nullable: true
+          type: array
+        jira_url:
+          nullable: true
+          type: string
+      type: object
+    CreateSprintRequest:
+      example:
+        end_at: end_at
+        description: description
+        title: title
+        start_at: start_at
+      properties:
+        title:
+          type: string
+        description:
+          nullable: true
+          type: string
+        start_at:
+          type: string
+        end_at:
+          type: string
+      type: object
+    UpdateSprintRequest:
+      example:
+        end_at: end_at
+        description: description
+        title: title
+        start_at: start_at
+      properties:
+        title:
+          type: string
+        description:
+          nullable: true
+          type: string
+        start_at:
+          type: string
+        end_at:
+          type: string
+      type: object
+    CreateStoryRequest:
+      example:
+        estimate: 0
+        description: description
+        jira_id: jira_id
+        sprint_id: sprint_id
+        title: title
+        assignee_id: assignee_id
+      properties:
+        title:
+          type: string
+        description:
+          nullable: true
+          type: string
+        estimate:
+          nullable: true
+          type: integer
+        jira_id:
+          nullable: true
+          type: string
+        sprint_id:
+          nullable: true
+          type: string
+        assignee_id:
+          nullable: true
+          type: string
+      type: object
+    UpdateStoryRequest:
+      example:
+        estimate: 0
+        description: description
+        jira_id: jira_id
+        sprint_id: sprint_id
+        title: title
+        assignee_id: assignee_id
+      properties:
+        title:
+          nullable: true
+          type: string
+        description:
+          nullable: true
+          type: string
+        estimate:
+          nullable: true
+          type: integer
+        jira_id:
+          nullable: true
+          type: string
+        sprint_id:
+          nullable: true
+          type: string
+        assignee_id:
+          nullable: true
+          type: string
+      type: object
+    GetSprintStoryBreakdownResponse:
+      items:
+        $ref: '#/components/schemas/GetSprintStoryBreakdownResponse_inner'
+      type: array
+    User:
+      example:
+        last_name: last_name
+        id: id
+        avatar: avatar
+        first_name: first_name
+        email: email
+      properties:
+        id:
+          readOnly: true
+          type: string
+        first_name:
+          type: string
+        last_name:
+          type: string
+        email:
+          type: string
+        avatar:
+          type: string
+      type: object
+    Project:
+      example:
+        updated_at: updated_at
+        name: name
+        creatorId: 0.8008281904610115
+        description: description
+        jira_url: jira_url
+        created_at: created_at
+        id: id
+        github_repos:
+        - github_repos
+        - github_repos
+      properties:
+        id:
+          readOnly: true
+          type: string
+        name:
+          type: string
+        description:
+          nullable: true
+          type: string
+        github_repos:
+          items:
+            type: string
+          type: array
+        jira_url:
+          type: string
+        creatorId:
+          type: number
+        created_at:
+          type: string
+        updated_at:
+          type: string
+      required:
+      - id
+      - title
+      type: object
+    Sprint:
+      example:
+        end_at: end_at
+        updated_at: updated_at
+        creatorId: 0.8008281904610115
+        description: description
+        created_at: created_at
+        id: id
+        title: title
+        start_at: start_at
+        projectId: 6.027456183070403
+      properties:
+        id:
+          readOnly: true
+          type: string
+        title:
+          type: string
+        description:
+          nullable: true
+          type: string
+        start_at:
+          type: string
+        end_at:
+          type: string
+        creatorId:
+          type: number
+        projectId:
+          type: number
+        created_at:
+          type: string
+        updated_at:
+          type: string
+      required:
+      - id
+      - title
+      type: object
+    Story:
+      example:
+        creator:
+          last_name: last_name
+          id: id
+          avatar: avatar
+          first_name: first_name
+          email: email
+        project_id: project_id
+        sprint:
+          end_at: end_at
+          updated_at: updated_at
+          creatorId: 0.8008281904610115
+          description: description
+          created_at: created_at
+          id: id
+          title: title
+          start_at: start_at
+          projectId: 6.027456183070403
+        estimate: 0
+        creator_id: creator_id
+        description: description
+        jira_id: jira_id
+        sprint_id: sprint_id
+        id: id
+        assignee:
+          last_name: last_name
+          id: id
+          avatar: avatar
+          first_name: first_name
+          email: email
+        title: title
+        assignee_id: assignee_id
+      properties:
+        id:
+          readOnly: true
+          type: string
+        title:
+          type: string
+        description:
+          nullable: true
+          type: string
+        estimate:
+          nullable: true
+          type: integer
+        jira_id:
+          nullable: true
+          type: string
+        project_id:
+          type: string
+        sprint_id:
+          nullable: true
+          type: string
+        sprint:
+          $ref: '#/components/schemas/Sprint'
+        creator_id:
+          type: string
+        creator:
+          $ref: '#/components/schemas/User'
+        assignee_id:
+          nullable: true
+          type: string
+        assignee:
+          $ref: '#/components/schemas/User'
+      type: object
+    Worklog:
+      properties:
+        id:
+          readOnly: true
+          type: string
+        description:
+          type: string
+        date:
+          type: string
+        effort:
+          type: string
+        remaining_effort:
+          type: string
+        story_id:
+          type: number
+        user_id:
+          type: number
+        created_at:
+          type: string
+        updated_at:
+          type: string
+      required:
+      - description
+      - effort
+      - id
+      type: object
+    GetSprintStoryBreakdownResponse_inner:
+      properties:
+        day:
+          type: string
+        in_progress:
+          type: string
+        new:
+          type: string
+        ready:
+          type: string
+        delivered:
+          type: string
+        in_review:
+          type: string
+        done:
+          type: string
+        blocked:
+          type: string
+        deleted:
+          type: string
+      type: object
