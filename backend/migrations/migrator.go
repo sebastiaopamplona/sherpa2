@@ -4,16 +4,17 @@ import (
 	"database/sql"
 	"fmt"
 	"github.com/jmoiron/sqlx"
+	mf "github.com/sebastiaopamplona/sherpa2/migrations/migration_files"
 )
 
-var migrations = []*Migration{}
+var migrations = []Migration{
+	mf.M0001CreateInitialSchema(),
+}
 
-// Run runs database migrations
-func Run(sqlDB *sql.DB, dialect string) error {
-	db := sqlx.NewDb(sqlDB, dialect)
-
+// Migrate runs database migrations
+func Migrate(sqlDB *sql.DB, dialect string) error {
 	_, _ = fmt.Println("Running migrations...")
-	_, err := db.Exec(`
+	_, err := sqlDB.Exec(`
 		CREATE TABLE IF NOT EXISTS migrations (
 			id TEXT PRIMARY KEY,
 			created_at timestamptz NOT NULL default now()
@@ -24,7 +25,7 @@ func Run(sqlDB *sql.DB, dialect string) error {
 
 	for _, m := range migrations {
 		var found string
-		err := db.Get(&found, `SELECT id FROM migrations WHERE id=$1`, m.ID)
+		err := sqlDB.QueryRow(`SELECT id FROM migrations WHERE id=$1`, m.ID).Scan(&found)
 		switch err {
 		case sql.ErrNoRows:
 			_, _ = fmt.Printf("Running migration: %v\n", m.ID)
@@ -42,7 +43,7 @@ func Run(sqlDB *sql.DB, dialect string) error {
 				continue
 			}
 
-			tx, err := db.Beginx()
+			tx, err := sqlDB.Begin()
 			if err != nil {
 				return errorf(err)
 			}
@@ -59,7 +60,7 @@ func Run(sqlDB *sql.DB, dialect string) error {
 			}
 		}
 
-		tx, err := db.Beginx()
+		tx, err := sqlDB.Begin()
 		if err != nil {
 			return errorf(err)
 		}
@@ -78,5 +79,48 @@ func Run(sqlDB *sql.DB, dialect string) error {
 
 		return nil
 	}
+	return nil
+}
+
+// Truncate runs database migrations
+func Truncate(sqlDB *sql.DB) error {
+	tx, err := sqlDB.Begin()
+	if err != nil {
+		return err
+	}
+
+	rows, err := tx.Query(`
+		SELECT
+			table_name
+		FROM
+			information_schema.tables
+		WHERE
+			table_type = 'BASE TABLE' AND table_schema = ANY (current_schemas(false));
+	`)
+	if err != nil {
+		return err
+	}
+
+	var tables []string
+	for rows.Next() {
+		var table string
+		if err := rows.Scan(&table); err != nil {
+			return err
+		}
+		tables = append(tables, table)
+	}
+
+	for _, table := range tables {
+		_, err = tx.Exec(`DROP TABLE ?;`, table)
+		if err != nil {
+			return err
+		}
+	}
+
+	err = tx.Commit()
+	if err != nil {
+		return err
+	}
+
 	return nil
 }

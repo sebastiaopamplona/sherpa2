@@ -1,25 +1,19 @@
 import { GET } from "@/lib/api"
 
-async function listSprints(projectId: number) {
+async function listSprints() {
   const { data, response } = await GET("/sprints", {
     params: {
       query: {
-        project_id: projectId,
-      },
-    },
+        project_id: 1,
+      }
+    }
   })
-
-  if (response.status !== 200) {
-    throw new Error(
-      `Failed to fetch sprints, unexpected status ${response.status}`
-    )
-  }
 
   return data
 }
 
 export default async function Home() {
-  const data = await listSprints(1)
+  const data = await listSprints()
 
   return (
     <main className="">
